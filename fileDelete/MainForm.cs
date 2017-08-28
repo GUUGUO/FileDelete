@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace fileDelete
 {
     public partial class MainForm : Form
     {
+        private readonly List<FileSystemInfo> _dragFiles = new List<FileSystemInfo>();
+        private readonly List<FileInfo> _searchFileInfos = new List<FileInfo>();
+        private int _delNum;
+        private string[] _filter_extention;
         private float _limitSize = 10;
-        private readonly List<FileInfo> _fileinfos = new List<FileInfo>();
-        private bool _isPath = false;
-        private bool _isSearch = false;
-        private int _delNum = 0;
 
         public MainForm()
         {
@@ -36,21 +30,43 @@ namespace fileDelete
             else e.Effect = DragDropEffects.None;
         }
 
-        private void panel1_DragLeave(object sender, EventArgs e)
-        {
-        }
-
         private void panel1_DragDrop(object sender, DragEventArgs e)
         {
-            labFloder.Text = ((System.Array) e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            if (File.Exists(labFloder.Text))
-            {
-                _isPath = false;
-            }
-            else
-            {
-                _isPath = true;
-            }
+            _dragFiles.Clear();
+
+            foreach (var o in (Array) e.Data.GetData(DataFormats.FileDrop))
+                if (File.Exists(o.ToString())) _dragFiles.Add(new FileInfo(o.ToString()));
+                else
+                    _dragFiles.Add(new DirectoryInfo(o.ToString()));
+            RefreshlvDragList();
+        }
+
+        private void RefreshlvDragList()
+        {
+            var dragWidth = lv_drag_list.Width;
+            lv_drag_list.Columns.Clear();
+            lv_drag_list.Columns.Add("文件名", (dragWidth - 120) / 3, HorizontalAlignment.Left);
+            lv_drag_list.Columns.Add("路径", (dragWidth - 120) * 2 / 3, HorizontalAlignment.Left);
+            lv_drag_list.Columns.Add("文件大小", 120, HorizontalAlignment.Center);
+
+            lv_drag_list.Items.Clear(); //清空lv1中的记录
+            lv_search_result.BeginUpdate();
+            foreach (var file in _dragFiles) 
+
+                if (file is FileInfo)
+                {
+                    var item = new ListViewItem(((FileInfo) file).Name);
+                    item.SubItems.Add(((FileInfo) file).DirectoryName);
+                    item.SubItems.Add(((float) ((FileInfo) file).Length / 1024 / 1024).ToString("0.00") + " MB");
+                    lv_drag_list.Items.Add(item);
+                }
+                else if (file is DirectoryInfo)
+                {
+                    var item = new ListViewItem(((DirectoryInfo) file).Name);
+                    item.SubItems.Add(((DirectoryInfo) file).FullName);
+                    lv_drag_list.Items.Add(item);
+                }
+            lv_search_result.EndUpdate(); //结束数据处理，UI界面一次性绘制。  
             Charge();
         }
 
@@ -63,68 +79,80 @@ namespace fileDelete
             Search();
         }
 
-        void Search()
+        private bool CheckFile(FileInfo file)
         {
-            listView1.Columns.Clear();
-            listView1.Columns.Add("路径", 180, HorizontalAlignment.Right);
-            listView1.Columns.Add("文件名", 100, HorizontalAlignment.Left);
-            listView1.Columns.Add("文件大小", 60, HorizontalAlignment.Left);
-            listView1.Items.Clear(); //清空lv1中的记录
-            _fileinfos.Clear();
-            DirectoryInfo theFolder = new DirectoryInfo(labFloder.Text);
-            SearchFile(theFolder);
-            foreach (FileInfo file in _fileinfos) //前提是stu有数据，stu是DataTable
-
-            {
-                ListViewItem item = new ListViewItem(file.DirectoryName);
-                item.SubItems.Add(file.Name);
-                item.SubItems.Add((((float) file.Length) / 1024 / 1024).ToString("0.00") + " MB");
-                this.listView1.Items.Add(item);
-            }
-            _isSearch = true;
-            Charge();
+            return (float) file.Length / 1024 / 1024 <= _limitSize;
         }
 
-        private void Charge()
+        private void Search()
         {
-            if (!_isPath)
-            {
-                btnSearch.Enabled = false;
-                labAttention.Text = "该路径不是文件夹，请重新拖拽";
-                btnSearch.Enabled = false;
-                btnDelEmpty.Enabled = false;
-            }
-            else if (!_isSearch)
-            {
-                labAttention.Text = "可以开始搜索";
-                btnSearch.Enabled = true;
-                btnDelEmpty.Enabled = true;
-                btnDelFIle.Enabled = false;
-            }
-            else
-            {
-                labAttention.Text = "请继续操作";
-                btnDelFIle.Enabled = true;
-            }
+            _searchFileInfos.Clear();
+
+            foreach (var file in _dragFiles) //前提是stu有数据，stu是DataTable
+
+                if (file is FileInfo)
+                {
+                    if (CheckFile((FileInfo) file))
+                        _searchFileInfos.Add((FileInfo) file);
+                }
+                else if (file is DirectoryInfo)
+                {
+                    SearchFile((DirectoryInfo) file);
+                }
+            RefreshLvSearchList();
+        }
+
+        private void RefreshLvSearchList()
+        {
+                labAttention.Text = "找到"+_searchFileInfos.Count+"个符合条件的结果";
+
+                lv_search_result.Columns.Clear();
+                lv_search_result.Columns.Add("路径", 180, HorizontalAlignment.Right);
+                lv_search_result.Columns.Add("文件名", 100, HorizontalAlignment.Left);
+                lv_search_result.Columns.Add("文件大小", 60, HorizontalAlignment.Left);
+                lv_search_result.Items.Clear(); //清空lv1中的记录
+                foreach (var file in _searchFileInfos) //前提是stu有数据，stu是DataTable
+                {
+                    var item = new ListViewItem(file.DirectoryName);
+                    item.SubItems.Add(file.Name);
+                    item.SubItems.Add(((float) file.Length / 1024 / 1024).ToString("0.00") + " MB");
+                    lv_search_result.Items.Add(item);
+                }
+                Charge();
         }
 
         private void SearchFile(DirectoryInfo folder)
         {
-            DirectoryInfo[] directory = folder.GetDirectories();
-            foreach (DirectoryInfo f in directory)
+            if (folder.Exists)
             {
-                SearchFile(f);
+                var directory = folder.GetDirectories();
+                foreach (var f in directory)
+                    SearchFile(f);
+                var fileInfo = folder.GetFiles();
+                foreach (var file in fileInfo)
+                    if (CheckFile(file))
+                        _searchFileInfos.Add(file);
             }
-            FileInfo[] fileInfo = folder.GetFiles();
-            foreach (FileInfo file in fileInfo)
-            {
-                if (((float) file.Length) / 1024 / 1024 <= _limitSize)
-                {
-                    _fileinfos.Add(file);
-                }
-            }
-            return;
         }
+
+        private void Charge()
+        {
+            btnSearch.Enabled = false;
+            btnDelEmpty.Enabled = false;
+            btnDelFIle.Enabled = false;
+            if (_dragFiles.Count > 0)
+            {
+                labAttention.Text = "可以开始搜索";
+                btnSearch.Enabled = true;
+            btnDelFIle.Enabled = true;
+            }
+            if (_searchFileInfos.Count > 0)
+            {
+                labAttention.Text = "请继续操作";
+                btnDelEmpty.Enabled = true;
+            }
+        }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -132,8 +160,7 @@ namespace fileDelete
 
         private void btnDelFIle_Click(object sender, EventArgs e)
         {
-            foreach (FileInfo file in _fileinfos)
-            {
+            foreach (var file in _searchFileInfos)
                 try
                 {
                     file.Delete();
@@ -142,16 +169,19 @@ namespace fileDelete
                 {
                     Console.WriteLine(exception);
                 }
-            }
             Search();
         }
 
+        private void tv_extention_TextChanged(object sender, EventArgs e)
+        {
+            _filter_extention = tv_extention.Text.Split(',');
+        }
 
         private void txtSize_TextChanged(object sender, EventArgs e)
         {
-            if (txtSize.Text != "" && Regex.IsMatch(txtSize.Text, @"^\d*\.?\d*$"))
+            if (tv_limit_size.Text != "" && Regex.IsMatch(tv_limit_size.Text, @"^\d*\.?\d*$"))
             {
-                _limitSize = float.Parse(txtSize.Text);
+                _limitSize = float.Parse(tv_limit_size.Text);
                 Charge();
             }
             else
@@ -160,51 +190,64 @@ namespace fileDelete
             }
         }
 
-        private bool DeleteEmptyFile(DirectoryInfo folder)
+        private bool CheckEmptyFile(List<DirectoryInfo> list, DirectoryInfo folder)
         {
-            bool isEmpty = true;
-            DirectoryInfo[] directory = folder.GetDirectories();
-            foreach (DirectoryInfo Folder in directory)
+            var directory = folder.GetDirectories();
+
+            foreach (var childFolder in directory)
+                if (!CheckEmptyFile(list, childFolder)) return false;
+            var childFiles = folder.GetFiles();
+            if (childFiles.Length == 0)
             {
-                isEmpty = DeleteEmptyFile(Folder);
-                if (isEmpty)
-                {
-                    Folder.Delete();
-                    _delNum++;
-                    ListViewItem item = new ListViewItem(Folder.Name);
-                    this.listView1.Items.Add(item);
-                    labAttention.Text = "已删除 " + _delNum + " 个空文件夹";
-                }
+                list.Add(folder);
+                return true;
             }
-            FileInfo[] fileInfo = folder.GetFiles();
-            foreach (FileInfo file in fileInfo)
-            {
-                isEmpty = false;
-            }
-            return isEmpty;
+            return false;
         }
 
         private void btnDelEmpty_Click(object sender, EventArgs e)
         {
-            listView1.Columns.Clear();
-            listView1.Items.Clear();
-            listView1.Columns.Add("已删除文件夹", 300, HorizontalAlignment.Right);
-
             _delNum = 0;
-            DirectoryInfo theFolder = new DirectoryInfo(labFloder.Text);
-            if (DeleteEmptyFile(theFolder))
+
+            var emptyDirectoryList = new List<DirectoryInfo>();
+            foreach (var file in _dragFiles) //前提是stu有数据，stu是DataTable
+                if (file is DirectoryInfo)
+                    CheckEmptyFile(emptyDirectoryList, (DirectoryInfo) file);
+            if (emptyDirectoryList.Count == 0)
             {
-                theFolder.Delete();
-                _delNum++;
-                ListViewItem item = new ListViewItem(theFolder.Name);
-                this.listView1.Items.Add(item);
-                labAttention.Text = "已删除 " + _delNum + " 个空文件夹";
-            }
-            if (_delNum == 0)
-            {
-                listView1.Columns.Clear();
                 labAttention.Text = "没有找到空文件夹";
             }
+            else
+            {
+                lv_search_result.Columns.Clear();
+                lv_search_result.Items.Clear();
+                lv_search_result.Columns.Add("已删除文件夹", 300, HorizontalAlignment.Right);
+                foreach (var folder in emptyDirectoryList) //前提是stu有数据，stu是DataTable
+                {
+                    _delNum++;
+                    var item = new ListViewItem(folder.Name);
+                    lv_search_result.Items.Add(item);
+                    folder.Delete();
+                    labAttention.Text = "已删除 " + _delNum + " 个空文件夹";
+                }
+                RefreshValideDragList();
+            }
+        }
+
+        private void RefreshValideDragList()
+        {
+            for (var i = _dragFiles.Count - 1; i > 0; i--)
+                if (!_dragFiles[i].Exists)
+                    _dragFiles.RemoveAt(i);
+            RefreshlvDragList();
+        }
+
+        private void btnClearDrag_Click(object sender, EventArgs e)
+        {
+            _dragFiles.Clear();
+            _searchFileInfos.Clear();
+            RefreshlvDragList();
+            RefreshLvSearchList();
         }
     }
 }
