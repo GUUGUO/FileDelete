@@ -36,16 +36,16 @@
             this.labAttention = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panelFunction = new System.Windows.Forms.Panel();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.btnDelFIle = new System.Windows.Forms.Button();
+            this.btnDelEmpty = new System.Windows.Forms.Button();
+            this.btnClearDrag = new System.Windows.Forms.Button();
+            this.labFloder = new System.Windows.Forms.Label();
             this.panalDrag = new System.Windows.Forms.Panel();
             this.lv_drag_list = new System.Windows.Forms.ListView();
             this.panelInput = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.tv_extention = new System.Windows.Forms.TextBox();
-            this.labFloder = new System.Windows.Forms.Label();
-            this.btnClearDrag = new System.Windows.Forms.Button();
-            this.btnDelEmpty = new System.Windows.Forms.Button();
-            this.btnDelFIle = new System.Windows.Forms.Button();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.panelSearchResult.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panelFunction.SuspendLayout();
@@ -154,6 +154,65 @@
             this.panelFunction.Size = new System.Drawing.Size(554, 50);
             this.panelFunction.TabIndex = 8;
             // 
+            // btnSearch
+            // 
+            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnSearch.Location = new System.Drawing.Point(295, 0);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(67, 50);
+            this.btnSearch.TabIndex = 12;
+            this.btnSearch.Text = "搜索文件";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            // 
+            // btnDelFIle
+            // 
+            this.btnDelFIle.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnDelFIle.Location = new System.Drawing.Point(362, 0);
+            this.btnDelFIle.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDelFIle.Name = "btnDelFIle";
+            this.btnDelFIle.Size = new System.Drawing.Size(67, 50);
+            this.btnDelFIle.TabIndex = 11;
+            this.btnDelFIle.Text = "删除文件";
+            this.btnDelFIle.UseVisualStyleBackColor = true;
+            // 
+            // btnDelEmpty
+            // 
+            this.btnDelEmpty.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnDelEmpty.Location = new System.Drawing.Point(429, 0);
+            this.btnDelEmpty.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDelEmpty.Name = "btnDelEmpty";
+            this.btnDelEmpty.Size = new System.Drawing.Size(70, 50);
+            this.btnDelEmpty.TabIndex = 10;
+            this.btnDelEmpty.Text = "删除空文件夹";
+            this.btnDelEmpty.UseVisualStyleBackColor = true;
+            // 
+            // btnClearDrag
+            // 
+            this.btnClearDrag.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnClearDrag.Font = new System.Drawing.Font("宋体", 9F);
+            this.btnClearDrag.Location = new System.Drawing.Point(499, 0);
+            this.btnClearDrag.Margin = new System.Windows.Forms.Padding(2);
+            this.btnClearDrag.Name = "btnClearDrag";
+            this.btnClearDrag.Size = new System.Drawing.Size(55, 50);
+            this.btnClearDrag.TabIndex = 7;
+            this.btnClearDrag.Text = "清空拖拽面板";
+            this.btnClearDrag.UseVisualStyleBackColor = true;
+            this.btnClearDrag.Click += new System.EventHandler(this.btnClearDrag_Click);
+            // 
+            // labFloder
+            // 
+            this.labFloder.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labFloder.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labFloder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.labFloder.Location = new System.Drawing.Point(0, 0);
+            this.labFloder.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labFloder.Name = "labFloder";
+            this.labFloder.Size = new System.Drawing.Size(188, 50);
+            this.labFloder.TabIndex = 4;
+            this.labFloder.Text = "请拖拽文件夹到上面的方框内";
+            this.labFloder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // panalDrag
             // 
             this.panalDrag.Controls.Add(this.lv_drag_list);
@@ -213,71 +272,13 @@
             this.tv_extention.TabIndex = 6;
             this.tv_extention.TextChanged += new System.EventHandler(this.tv_extention_TextChanged);
             // 
-            // labFloder
-            // 
-            this.labFloder.Dock = System.Windows.Forms.DockStyle.Left;
-            this.labFloder.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labFloder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.labFloder.Location = new System.Drawing.Point(0, 0);
-            this.labFloder.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labFloder.Name = "labFloder";
-            this.labFloder.Size = new System.Drawing.Size(188, 50);
-            this.labFloder.TabIndex = 4;
-            this.labFloder.Text = "请拖拽文件夹到上面的方框内";
-            this.labFloder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // btnClearDrag
-            // 
-            this.btnClearDrag.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClearDrag.Font = new System.Drawing.Font("宋体", 9F);
-            this.btnClearDrag.Location = new System.Drawing.Point(499, 0);
-            this.btnClearDrag.Margin = new System.Windows.Forms.Padding(2);
-            this.btnClearDrag.Name = "btnClearDrag";
-            this.btnClearDrag.Size = new System.Drawing.Size(55, 50);
-            this.btnClearDrag.TabIndex = 7;
-            this.btnClearDrag.Text = "清空拖拽面板";
-            this.btnClearDrag.UseVisualStyleBackColor = true;
-            this.btnClearDrag.Click += new System.EventHandler(this.btnClearDrag_Click);
-            // 
-            // btnDelEmpty
-            // 
-            this.btnDelEmpty.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnDelEmpty.Location = new System.Drawing.Point(429, 0);
-            this.btnDelEmpty.Margin = new System.Windows.Forms.Padding(2);
-            this.btnDelEmpty.Name = "btnDelEmpty";
-            this.btnDelEmpty.Size = new System.Drawing.Size(70, 50);
-            this.btnDelEmpty.TabIndex = 10;
-            this.btnDelEmpty.Text = "删除空文件夹";
-            this.btnDelEmpty.UseVisualStyleBackColor = true;
-            // 
-            // btnDelFIle
-            // 
-            this.btnDelFIle.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnDelFIle.Location = new System.Drawing.Point(362, 0);
-            this.btnDelFIle.Margin = new System.Windows.Forms.Padding(2);
-            this.btnDelFIle.Name = "btnDelFIle";
-            this.btnDelFIle.Size = new System.Drawing.Size(67, 50);
-            this.btnDelFIle.TabIndex = 11;
-            this.btnDelFIle.Text = "删除文件";
-            this.btnDelFIle.UseVisualStyleBackColor = true;
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnSearch.Location = new System.Drawing.Point(295, 0);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(67, 50);
-            this.btnSearch.TabIndex = 12;
-            this.btnSearch.Text = "搜索文件";
-            this.btnSearch.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(614, 618);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.labAttention);
