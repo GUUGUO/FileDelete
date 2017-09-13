@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfApp1.Model;
 
 namespace WpfApp1
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    ///     MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -43,11 +32,12 @@ namespace WpfApp1
         private void ListView_Drop(object sender, DragEventArgs e)
         {
             _dragFiles.Clear();
-
-            foreach (var o in (Array) e.Data.GetData(DataFormats.FileDrop))
-                if (File.Exists(o.ToString())) _dragFiles.Add(new FileInfo(o.ToString()));
-                else
-                    _dragFiles.Add(new DirectoryInfo(o.ToString()));
+            var data = e.Data.GetData(DataFormats.FileDrop);
+            if (data != null)
+                foreach (var o in (Array) data)
+                    if (File.Exists(o.ToString())) _dragFiles.Add(new FileInfo(o.ToString()));
+                    else
+                        _dragFiles.Add(new DirectoryInfo(o.ToString()));
             RefreshlvDragList();
         }
 
@@ -55,34 +45,35 @@ namespace WpfApp1
         {
             var dragFileModels = new List<FileBean>();
             foreach (var file in _dragFiles)
-
-                if (file is FileInfo)
-                {
-                    var tFile = (FileInfo) file;
-                    var bean = new FileBean()
+                if (file != null)
+                    if (file is FileInfo)
                     {
-                        FileName = tFile.Name,
-                        Icon = "Assets/文件.png",
-                        FilePath = tFile.DirectoryName,
-                        Describe = (tFile.Length / 1024 / 1024).ToString("0.00") + " MB"
-                    };
-                    dragFileModels.Add(bean);
-                }
-                else if (file is DirectoryInfo)
-                {
-                    var tFile = (DirectoryInfo) file;
-                    var bean = new FileBean()
+                        var tFile = (FileInfo) file;
+                        var bean = new FileBean
+                        {
+                            FileName = tFile.Name,
+                            Icon = "Assets/文件.png",
+                            FilePath = tFile.DirectoryName,
+                            Describe = (tFile.Length / 1024 / 1024).ToString("0.00") + " MB"
+                        };
+                        dragFileModels.Add(bean);
+                    }
+                    else if (file is DirectoryInfo)
                     {
-                        FileName = tFile.Name,
-                        Icon = "Assets/文件夹.png",
-                        FilePath = tFile.FullName,
-                        Describe = tFile.GetFiles().Length + "项"
-                    };
-                    dragFileModels.Add(bean);
-                }
+                        var tFile = (DirectoryInfo) file;
+                        var bean = new FileBean
+                        {
+                            FileName = tFile.Name,
+                            Icon = "Assets/文件夹.png",
+                            FilePath = tFile.FullName,
+                            Describe = tFile.GetFiles().Length + "项"
+                        };
+                        dragFileModels.Add(bean);
+                    }
             DragListView.ItemsSource = dragFileModels;
             Charge();
         }
+
         private void Charge()
         {
 //            btnSearch.Enabled = false;
@@ -100,6 +91,5 @@ namespace WpfApp1
 //                btnDelEmpty.Enabled = true;
 //            }
         }
-
     }
 }
