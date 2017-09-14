@@ -164,6 +164,7 @@
             this.btnSearch.TabIndex = 12;
             this.btnSearch.Text = "搜索文件";
             this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click_1);
             // 
             // btnDelFIle
             // 

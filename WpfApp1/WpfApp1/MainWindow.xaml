@@ -6,25 +6,64 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Padding="0,0,0,0"
-        Title="MainWindow" Height="500" Width="525">
+        Title="MainWindow" Height="500" Width="705">
     <Window.Resources>
         <SolidColorBrush x:Key="TextHintColor" Color="#9C9C9C" />
         <SolidColorBrush x:Key="MainBgBrush" Color="#EDEDED" />
+        <DataTemplate x:Key="FileDataTemplate">
+            <Grid Height="50" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1px" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.RowSpan="2" Width="35" Source="{Binding Icon}" />
+                <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Bottom" />
+                <StackPanel Margin="0,4,0,0" Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Describe}" FontSize="10" Foreground="#BB000000" />
+                    <TextBlock Text="|" FontSize="10" Foreground="#BB000000" Margin="4,0,4,0" />
+                    <TextBlock Text="{Binding FilePath}" FontSize="10" Foreground="#BB000000" />
+                </StackPanel>
+                <Rectangle Grid.Row="2" Height="1px" Fill="#22000000" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="FileResultDataTemplate">
+            <Grid Height="40" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1px" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Rectangle Fill="Aqua" Grid.RowSpan="2" Width="15" Height="15" VerticalAlignment="Center"
+                           HorizontalAlignment="Center" RadiusX="10" RadiusY="10" />
+                <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Bottom" />
+                <StackPanel Margin="0,4,0,0" Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Describe}" FontSize="10" Foreground="#BB000000" />
+                    <TextBlock Text="|" FontSize="10" Foreground="#BB000000" Margin="4,0,4,0" />
+                    <TextBlock Text="{Binding FilePath}" FontSize="10" Foreground="#BB000000" />
+                </StackPanel>
+                <Rectangle Grid.ColumnSpan="2" Grid.Row="2" Height="1px" Fill="#22000000" HorizontalAlignment="Stretch" />
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
     <Grid Background="{DynamicResource MainBgBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <TextBlock HorizontalAlignment="Stretch" Background="White" Padding="8,8,8,8" VerticalAlignment="Top"
-                   TextWrapping="Wrap"
-                   Text="请把文件夹拖拽到蓝色方框内" Foreground="#20BFBE" />
-        <Grid Grid.Row="1" Margin="10,10,10,10" Height="20">
+        <Grid Grid.Row="0" Margin="10,10,10,10" Height="20">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <TextBlock Foreground="{DynamicResource TextHintColor}" Text="限制大小 " VerticalAlignment="Center" />
-                <TextBox Width="30" />
+                <TextBox x:Name="TBoxLimitSize" Width="30" Text="10" TextChanged="TBoxLimitSize_TextChanged" />
                 <TextBlock Text=" MB" VerticalAlignment="Center" Foreground="{DynamicResource TextHintColor}" />
                 <TextBlock Foreground="{DynamicResource TextHintColor}" Text="后缀名 " Margin="40,0,0,0"
                            VerticalAlignment="Center" />
@@ -32,53 +71,56 @@
                 <TextBlock Foreground="{DynamicResource TextHintColor}" Text=" (使用逗号隔开)" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.3*" />
             </Grid.ColumnDefinitions>
-            <ListView IsSelected="False" Name="DragListView" Grid.Row="1" Margin="0,0,0,0"
-                      DragEnter="ListView_DragEnter"
-                      Drop="ListView_Drop" AllowDrop="True" Background="White">
+            <ListView
+                BorderBrush="{StaticResource MainBgBrush}"
+                IsSelected="False" Name="DragListView" Grid.Row="1" Margin="0,0,0,0"
+                DragEnter="ListView_DragEnter"
+                Drop="ListView_Drop" AllowDrop="True" Background="White"
+                ItemTemplate="{StaticResource FileDataTemplate}">
+                <ListView.BorderThickness>
+                    <Thickness Right="3" />
+                </ListView.BorderThickness>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Padding" Value="0,0,0,0" />
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Height="50">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <Image Grid.RowSpan="2" Width="35" Source="{Binding Icon}" />
-                            <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Bottom" />
-                            <StackPanel Margin="0,4,0,0" Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
-                                <TextBlock Text="{Binding Describe}" FontSize="10" Foreground="#BB000000" />
-                                <TextBlock Text="|" FontSize="10" Foreground="#BB000000" Margin="4,0,4,0" />
-                                <TextBlock Text="{Binding FilePath}" FontSize="10" Foreground="#BB000000" />
-                            </StackPanel>
-                            <Rectangle Grid.Row="2" Fill="#33000000" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
             </ListView>
-            <ListView Grid.Column="1" Background="#00000000" />
+            <ListView
+                BorderThickness="0"
+                ItemTemplate="{StaticResource FileResultDataTemplate}"
+                x:Name="ResultListView" Grid.Column="1">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="0,0,0,0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
         </Grid>
-        <StackPanel Margin="0,4,0,4" HorizontalAlignment="Right" Grid.Row="3" Orientation="Horizontal">
-            <Button Width="75" Content="搜索文件" Style="{StaticResource RoundCorner}" Foreground="White"
-                    VerticalAlignment="Stretch" />
-            <Button Padding="8"  Content="Button" Style="{StaticResource RoundCorner}" Foreground="White"
-                    VerticalAlignment="Stretch"  />
-            <Button Content="Button" Style="{StaticResource RoundCorner}" Foreground="White"
-                    VerticalAlignment="Stretch"  />
+
+        <TextBlock x:Name="TbAttention" Background="White" Padding="8,8,8,8"
+                   VerticalAlignment="Center"
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Left"
+                   Text="请把文件夹拖拽到左侧白色方框内" Foreground="BlueViolet" Grid.Row="2" />
+        <StackPanel Margin="0,4,0,4" HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
+            <Button x:Name="btnDelEmpty" Content="删除空文件夹" Style="{StaticResource RoundCorner}" Foreground="White"
+                    Click="btnDelEmpty_Click" />
+            <Button x:Name="BtnSearch" Padding="10" Content="搜索文件" Style="{StaticResource RoundCorner}"
+                    Foreground="White"
+                    HorizontalAlignment="Center" Click="btnSearch_Click" />
+            <Button x:Name="BtnDelFile" Padding="10" Content="删除文件" Style="{StaticResource RoundCorner}"
+                    Foreground="White"
+                    HorizontalAlignment="Center" Click="BtnDelFile_Click" />
+            <Button Content="清空拖拽面板" Style="{StaticResource RoundCorner}" Foreground="White" />
         </StackPanel>
     </Grid>
 </Window>

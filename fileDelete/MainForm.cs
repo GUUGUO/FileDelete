@@ -249,5 +249,10 @@ namespace fileDelete
             RefreshlvDragList();
             RefreshLvSearchList();
         }
+
+        private void btnSearch_Click_1(object sender, EventArgs e)
+        {
+            Search();
+        }
     }
 }
