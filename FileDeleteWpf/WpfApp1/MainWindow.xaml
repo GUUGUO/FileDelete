@@ -1,4 +1,4 @@
-﻿<Window x:Class="WpfApp1.MainWindow"
+﻿<Window x:Class="FileDeleteWpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Padding="0,0,0,0"
-        Title="MainWindow" Height="500" Width="705">
+        Title="MainWindow" Height="500" Width="705" Loaded="Window_Loaded">
     <Window.Resources>
         <SolidColorBrush x:Key="TextHintColor" Color="#9C9C9C" />
         <SolidColorBrush x:Key="MainBgBrush" Color="#EDEDED" />
@@ -67,7 +67,7 @@
                 <TextBlock Text=" MB" VerticalAlignment="Center" Foreground="{DynamicResource TextHintColor}" />
                 <TextBlock Foreground="{DynamicResource TextHintColor}" Text="后缀名 " Margin="40,0,0,0"
                            VerticalAlignment="Center" />
-                <TextBox Width="100" />
+                <TextBox x:Name="TBoxExtention" Width="100" TextChanged="TBoxExtention_TextChanged" />
                 <TextBlock Foreground="{DynamicResource TextHintColor}" Text=" (使用逗号隔开)" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
@@ -112,15 +112,15 @@
                    HorizontalAlignment="Left"
                    Text="请把文件夹拖拽到左侧白色方框内" Foreground="BlueViolet" Grid.Row="2" />
         <StackPanel Margin="0,4,0,4" HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
-            <Button x:Name="btnDelEmpty" Content="删除空文件夹" Style="{StaticResource RoundCorner}" Foreground="White"
-                    Click="btnDelEmpty_Click" />
-            <Button x:Name="BtnSearch" Padding="10" Content="搜索文件" Style="{StaticResource RoundCorner}"
+            <Button x:Name="BtnEmptySearch" Content="空文件夹搜索" Style="{StaticResource RoundCorner}" Foreground="White"
+                    Click="BtnEmptySearchClick" />
+            <Button x:Name="BtnConditionSearch" Padding="10" Content="条件搜索" Style="{StaticResource RoundCorner}"
                     Foreground="White"
-                    HorizontalAlignment="Center" Click="btnSearch_Click" />
+                    HorizontalAlignment="Center" Click="btnConditionSearch_Click" />
             <Button x:Name="BtnDelFile" Padding="10" Content="删除文件" Style="{StaticResource RoundCorner}"
                     Foreground="White"
                     HorizontalAlignment="Center" Click="BtnDelFile_Click" />
-            <Button Content="清空拖拽面板" Style="{StaticResource RoundCorner}" Foreground="White" />
+            <Button x:Name="BtnClearDrag" Content="清空拖拽面板" Click="BtnClearDrag_Click" Style="{StaticResource RoundCorner}" Foreground="White" />
         </StackPanel>
     </Grid>
 </Window>

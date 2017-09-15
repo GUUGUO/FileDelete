@@ -176,6 +176,7 @@
             this.btnDelFIle.TabIndex = 11;
             this.btnDelFIle.Text = "删除文件";
             this.btnDelFIle.UseVisualStyleBackColor = true;
+            this.btnDelFIle.Click += new System.EventHandler(this.btnDelFIle_Click);
             // 
             // btnDelEmpty
             // 
@@ -187,6 +188,7 @@
             this.btnDelEmpty.TabIndex = 10;
             this.btnDelEmpty.Text = "删除空文件夹";
             this.btnDelEmpty.UseVisualStyleBackColor = true;
+            this.btnDelEmpty.Click += new System.EventHandler(this.btnDelEmpty_Click);
             // 
             // btnClearDrag
             // 
